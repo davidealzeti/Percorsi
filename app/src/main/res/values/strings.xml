@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Percorsi</string>
+
+    <!-- Menu Titles   -->
+    <string name="sorting_icon_title">Ordinamento dei Percorsi</string>
+    <string name="options_menu_icon_title">Opzioni</string>
+    <string name="app_info_icon_title">Informazioni sull\'app</string>
 </resources>
