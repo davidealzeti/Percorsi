@@ -5,4 +5,7 @@
     <string name="sorting_icon_title">Ordinamento dei Percorsi</string>
     <string name="options_menu_icon_title">Opzioni</string>
     <string name="app_info_icon_title">Informazioni sull\'app</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

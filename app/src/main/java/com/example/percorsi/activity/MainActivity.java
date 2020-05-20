@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.percorsi.R;
+import com.example.percorsi.fragment.RouteListFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_fragment_activity);
+
+        getSupportFragmentManager().beginTransaction().add(R.id.container, new RouteListFragment()).commit();
 
         setupToolbar();
     }
