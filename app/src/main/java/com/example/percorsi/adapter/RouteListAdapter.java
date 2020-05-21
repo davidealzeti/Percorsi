@@ -1,5 +1,6 @@
 package com.example.percorsi.adapter;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.percorsi.R;
+import com.example.percorsi.activity.RouteActivity;
 import com.example.percorsi.model.Route;
 
 import java.util.ArrayList;
 
-public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> {
+public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.ViewHolder> {
     private static final String TAG = "AdapterListaPercorsi";
 
     private ArrayList<Route> routeDataSet;
@@ -32,7 +34,13 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "Cliccato un elemento della lista di Percorsi alla posizione: " + getAdapterPosition());
-                    //TODO: gestire il click di un elemento della lista
+
+                    /*
+                        TODO: gestire il click di un elemento della lista (apertura di una nuova Activity)
+                            passando nel bundle dell'intent un l'elemento cliccato di tipo Route
+                     */
+
+                    v.getContext().startActivity(new Intent(v.getContext(), RouteActivity.class));
                 }
             });
         }
@@ -49,7 +57,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
         }
     }
 
-    public RouteAdapter(ArrayList<Route> routeDataSet){
+    public RouteListAdapter(ArrayList<Route> routeDataSet){
         Log.d(TAG, "Costruttore RouteAdapter chiamato");
         this.routeDataSet = routeDataSet;
     }

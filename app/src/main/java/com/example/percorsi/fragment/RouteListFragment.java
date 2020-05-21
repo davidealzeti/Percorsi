@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.percorsi.R;
-import com.example.percorsi.adapter.RouteAdapter;
+import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.RouteManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,7 +29,7 @@ public class RouteListFragment extends Fragment {
 
     private RecyclerView routeListRecyclerView = null;
     private LinearLayoutManager routeListLayoutManager = null;
-    private RouteAdapter routeAdapter = null;
+    private RouteListAdapter routeListAdapter = null;
 
     private ArrayList<Route> routeList = null;
 
@@ -57,7 +57,7 @@ public class RouteListFragment extends Fragment {
                 Route route = new Route("Test", new Random().nextDouble(), new Random().nextDouble());
                 RouteManager.getInstance().addRoute(route);
 
-                routeAdapter.notifyDataSetChanged();
+                routeListAdapter.notifyDataSetChanged();
                 routeListRecyclerView.scrollToPosition(routeList.size()-1);
             }
         });
@@ -84,8 +84,8 @@ public class RouteListFragment extends Fragment {
         routeListRecyclerView.setHasFixedSize(true);
 
         this.routeList = RouteManager.getInstance().getRouteList();
-        routeAdapter = new RouteAdapter(routeList);
-        routeListRecyclerView.setAdapter(routeAdapter);
+        routeListAdapter = new RouteListAdapter(routeList);
+        routeListRecyclerView.setAdapter(routeListAdapter);
 
     }
 }
