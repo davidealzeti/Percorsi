@@ -13,6 +13,9 @@ import com.example.percorsi.R;
 import com.example.percorsi.adapter.RoutePagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
+/**
+ * Classe che permette di visualizzare o effettuare un Percorso.
+ */
 public class RouteActivity extends AppCompatActivity {
     private static final String TAG = "ActivityPercorso";
 

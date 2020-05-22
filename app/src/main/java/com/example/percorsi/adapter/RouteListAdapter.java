@@ -1,6 +1,7 @@
 package com.example.percorsi.adapter;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,13 @@ import com.example.percorsi.model.Route;
 
 import java.util.ArrayList;
 
+/**
+ * Classe che gestisce la lista dei Percorsi.
+ */
 public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.ViewHolder> {
     private static final String TAG = "AdapterListaPercorsi";
+
+    public static final String ROUTE_ITEM = "Percorso";
 
     private ArrayList<Route> routeDataSet;
 
@@ -33,14 +39,15 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Cliccato un elemento della lista di Percorsi alla posizione: " + getAdapterPosition());
+                    Log.d(TAG, "Cliccato un elemento della lista dei Percorsi alla posizione: " + getAdapterPosition());
 
-                    /*
-                        TODO: gestire il click di un elemento della lista (apertura di una nuova Activity)
-                            passando nel bundle dell'intent un l'elemento cliccato di tipo Route
-                     */
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ROUTE_ITEM, routeDataSet.get(getAdapterPosition()));
 
-                    v.getContext().startActivity(new Intent(v.getContext(), RouteActivity.class));
+                    Intent routeClickedIntent = new Intent(new Intent(v.getContext(), RouteActivity.class));
+                    routeClickedIntent.putExtras(bundle);
+
+                    v.getContext().startActivity(routeClickedIntent);
                 }
             });
         }
@@ -85,6 +92,5 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
     public int getItemCount() {
         return routeDataSet.size();
     }
-
 
 }

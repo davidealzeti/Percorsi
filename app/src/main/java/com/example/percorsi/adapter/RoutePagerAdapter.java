@@ -14,6 +14,10 @@ import com.example.percorsi.R;
 import com.example.percorsi.fragment.RouteInfoFragment;
 import com.example.percorsi.fragment.RouteMapFragment;
 
+/**
+ * Classe che gestisce l'impaginazione di un percorso mostrando due Tab, una per
+ * le informazioni e una per la mappa.
+ */
 public class RoutePagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = "AdapterTabPercorso";
 
