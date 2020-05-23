@@ -12,18 +12,25 @@ import androidx.annotation.NonNull;
 public class Route implements Parcelable {
     private static final String TAG = "Percorso";
 
+    public static final String ON_FOOT = "A piedi";
+    public static final String BY_CAR = "In macchina";
+    public static final String BY_PUBLIC_TRANSPORT = "Mezzi pubblici";
+
     private String name;
+    private String meansOfTransport;
     private double startLatitude, startLongitude;
 
-    public Route(String name, double startLatitude, double startLongitude){
+    public Route(String name, String meansOfTransport, double startLatitude, double startLongitude){
         Log.d(TAG, "Chiamato costruttore della classe Route");
         this.name = name;
+        this.meansOfTransport = meansOfTransport;
         this.startLatitude = startLatitude;
         this.startLongitude = startLongitude;
     }
 
     private Route(Parcel in) {
         name = in.readString();
+        meansOfTransport = in.readString();
         startLatitude = in.readDouble();
         startLongitude = in.readDouble();
     }
@@ -52,6 +59,14 @@ public class Route implements Parcelable {
         this.startLongitude = startLongitude;
     }
 
+    public String getMeansOfTransport() {
+        return meansOfTransport;
+    }
+
+    public void setMeansOfTransport(String meansOfTransport) {
+        this.meansOfTransport = meansOfTransport;
+    }
+
     public static final Creator<Route> CREATOR = new Creator<Route>() {
         @Override
         public Route createFromParcel(Parcel in) {
@@ -67,8 +82,8 @@ public class Route implements Parcelable {
     @NonNull
     @Override
     public String toString() {
-        return "Nome Percorso: " + this.getName() +  "\nStart Lat: "  +
-                this.getStartLatitude() + " Start Lon: " + this.getStartLongitude();
+        return "Nome Percorso: " + this.getName() + " Mezzo di trasporto: " + this.getMeansOfTransport()  +
+                "\nStart Lat: "  + this.getStartLatitude() + " Start Lon: " + this.getStartLongitude();
     }
 
     @Override
@@ -79,6 +94,7 @@ public class Route implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(meansOfTransport);
         dest.writeDouble(startLatitude);
         dest.writeDouble(startLongitude);
     }

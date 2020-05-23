@@ -10,6 +10,20 @@
     <string name="route_info_tab_title">Percorso</string>
     <string name="route_map_tab_title">Mappa</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- CreateRouteDialog Strings  -->
+    <string name="create_route_dialog_title">Nuovo Percorso</string>
+    <string name="create_route_dialog_name_hint">Nome</string>
+    <string name="create_route_dialog_name_request">Dai un nome al tuo percorso..</string>
+    <string name="create_route_dialog_means_request">Come ti muoverai?</string>
+
+    <string-array name="create_route_dialog_means_of_transport_array">
+        <item name="create_route_dialog_foot">A piedi</item>
+        <item name="create_route_dialog_car">In macchina</item>
+        <item name="create_route_dialog_public">Mezzi pubblici</item>
+    </string-array>
+
+    <string name="create_route_dialog_cancel_choice">Annulla</string>
+    <string name="create_route_dialog_confirm_choice">Crea</string>
+    <string name="create_route_dialog_no_name_error">Inserisci un nome</string>
+
 </resources>

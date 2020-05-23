@@ -1,5 +1,6 @@
 package com.example.percorsi.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.percorsi.R;
 import com.example.percorsi.adapter.RouteListAdapter;
@@ -24,7 +31,7 @@ import java.util.Random;
  * La classe RouteListFragment mostra la lista degli elementi Route generati
  * dall'utente, i quali rappresentano i Percorsi svolti.
  */
-public class RouteListFragment extends Fragment {
+public class RouteListFragment extends Fragment{
     private static final String TAG = "FragmentListaPercorsi";
 
     private RecyclerView routeListRecyclerView = null;
@@ -35,16 +42,21 @@ public class RouteListFragment extends Fragment {
 
     private FloatingActionButton addRouteButton = null;
 
+    private TextView nameRequestTextView, meansRequestTextView;
+    private EditText nameEditText;
+    private Spinner meansSpinner;
+
+    private AlertDialog routeCreationDialog = null;
+
     public RouteListFragment() {
         Log.d(TAG, "Costruttore RouteListFragment chiamato");
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_route_list, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_route_list, container, false);
 
         setupRouteList(rootView);
 
@@ -54,11 +66,8 @@ public class RouteListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Cliccato floatingButton per l'aggiunta di un nuovo percorso");
-                Route route = new Route("Test", new Random().nextDouble(), new Random().nextDouble());
-                RouteManager.getInstance().addRoute(route);
 
-                routeListAdapter.notifyDataSetChanged();
-                routeListRecyclerView.scrollToPosition(routeList.size()-1);
+                openRouteCreationDialog();
             }
         });
 
@@ -87,5 +96,78 @@ public class RouteListFragment extends Fragment {
         routeListAdapter = new RouteListAdapter(routeList);
         routeListRecyclerView.setAdapter(routeListAdapter);
 
+    }
+
+    private void openRouteCreationDialog(){
+        Log.d(TAG, "Aperto il CreateRouteDialog");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View rootView = inflater.inflate(R.layout.dialog_create_route_layout, null);
+
+        setupRouteCreationDialogUI(rootView);
+        setupRouteCreationDialogSpinner(rootView);
+
+        builder.setView(rootView)
+                .setTitle(R.string.create_route_dialog_title)
+                .setPositiveButton(R.string.create_route_dialog_confirm_choice, null)
+                .setNegativeButton(R.string.create_route_dialog_cancel_choice, null);
+
+        this.routeCreationDialog = builder.create();
+        routeCreationDialog.show();
+        setupRouteCreationDialogButtons(routeCreationDialog);
+    }
+
+    private void setupRouteCreationDialogUI(View view){
+        nameRequestTextView = view.findViewById(R.id.dialog_name_request_text_view);
+        meansRequestTextView = view.findViewById(R.id.dialog_means_request_text_view);
+        nameEditText = view.findViewById(R.id.dialog_name_edit_text);
+
+        nameRequestTextView.setText(R.string.create_route_dialog_name_request);
+        meansRequestTextView.setText(R.string.create_route_dialog_means_request);
+    }
+
+    private void setupRouteCreationDialogSpinner(View view){
+        meansSpinner = view.findViewById(R.id.dialog_means_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
+                R.array.create_route_dialog_means_of_transport_array, android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        meansSpinner.setAdapter(adapter);
+    }
+
+    private void setupRouteCreationDialogButtons(final AlertDialog dialog){
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        negativeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Cliccato RouteCreationDialog: Annulla");
+                dialog.dismiss();
+            }
+        });
+
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Cliccato RouteCreationDialog: Crea");
+                if (nameEditText.getText().toString().equals("")) {
+                    nameEditText.setError(getContext().getText(R.string.create_route_dialog_no_name_error));
+                }
+                else{
+                    String routeName = nameEditText.getText().toString();
+                    String meansOfTransport = meansSpinner.getSelectedItem().toString();
+
+                    Route route = new Route(routeName, meansOfTransport,
+                            new Random().nextDouble(), new Random().nextDouble());
+                    RouteManager.getInstance().addRoute(route);
+
+                    //TODO: rimandare a RouteActivity con i dati del percorso creato
+
+                    routeListAdapter.notifyDataSetChanged();
+                    routeListRecyclerView.scrollToPosition(routeList.size()-1);
+                    dialog.dismiss();
+                }
+            }
+        });
     }
 }

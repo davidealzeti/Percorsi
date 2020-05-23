@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/dialog_name_request_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_route_dialog_name_request"/>
+
+    <EditText
+        android:id="@+id/dialog_name_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:hint="@string/create_route_dialog_name_hint"
+        android:layout_below="@+id/dialog_name_request_text_view"
+        android:autofillHints="@string/create_route_dialog_name_hint"/>
+
+    <TextView
+        android:id="@+id/dialog_means_request_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_name_edit_text"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="@string/create_route_dialog_means_request"/>
+
+    <Spinner
+        android:id="@+id/dialog_means_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_means_request_text_view"/>
+
+</RelativeLayout>

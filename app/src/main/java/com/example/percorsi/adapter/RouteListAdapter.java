@@ -15,6 +15,7 @@ import com.example.percorsi.R;
 import com.example.percorsi.activity.RouteActivity;
 import com.example.percorsi.model.Route;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -82,8 +83,8 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
         Log.d(TAG, "Chiamato onBindViewHolder");
         Route route = routeDataSet.get(position);
         String name = route.getName();
-        String startLat = String.valueOf(route.getStartLatitude());
-        String startLon = String.valueOf(route.getStartLongitude());
+        String startLat = new DecimalFormat("##.##").format(route.getStartLatitude());
+        String startLon = new DecimalFormat("##.##").format(route.getStartLongitude());
 
         holder.setText(name, startLat, startLon);
     }
