@@ -23,7 +23,7 @@ public class RouteInfoFragment extends Fragment {
 
     private Route clickedRoute = null;
 
-    private TextView routeNameTextView, startLatTextView, startLonTextView;
+    private TextView routeNameTextView, meansOfTransportTextView, startLatTextView, startLonTextView;
 
     public RouteInfoFragment() {
         // Required empty public constructor
@@ -52,6 +52,7 @@ public class RouteInfoFragment extends Fragment {
 
     private void setupUI(View view){
         routeNameTextView = view.findViewById(R.id.route_name_text_view);
+        meansOfTransportTextView = view.findViewById(R.id.means_of_transport_text_view);
         startLatTextView = view.findViewById(R.id.route_start_lat_text_view);
         startLonTextView = view.findViewById(R.id.route_start_lon_text_view);
     }
@@ -60,6 +61,7 @@ public class RouteInfoFragment extends Fragment {
         if (route != null){
             Log.d(TAG, "Impostazione del testo sulle TextView");
             routeNameTextView.setText(route.getName());
+            meansOfTransportTextView.setText(route.getMeansOfTransport());
             startLatTextView.setText(String.valueOf(route.getStartLatitude()));
             startLonTextView.setText(String.valueOf(route.getStartLongitude()));
         }

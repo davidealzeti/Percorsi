@@ -1,6 +1,7 @@
 package com.example.percorsi.fragment;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.percorsi.R;
+import com.example.percorsi.activity.RouteActivity;
 import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.RouteManager;
@@ -161,11 +163,19 @@ public class RouteListFragment extends Fragment{
                             new Random().nextDouble(), new Random().nextDouble());
                     RouteManager.getInstance().addRoute(route);
 
-                    //TODO: rimandare a RouteActivity con i dati del percorso creato
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(RouteListAdapter.ROUTE_ITEM, route);
 
-                    routeListAdapter.notifyDataSetChanged();
-                    routeListRecyclerView.scrollToPosition(routeList.size()-1);
+                    /*routeListAdapter.notifyDataSetChanged();
+                    routeListRecyclerView.scrollToPosition(routeList.size()-1);*/
+
+                    Intent routeClickedIntent = new Intent(new Intent(v.getContext(), RouteActivity.class));
+                    routeClickedIntent.putExtras(bundle);
+
                     dialog.dismiss();
+
+                    v.getContext().startActivity(routeClickedIntent);
+
                 }
             }
         });
