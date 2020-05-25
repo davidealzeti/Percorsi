@@ -82,14 +82,6 @@ public class RouteListFragment extends Fragment{
 
         routeListLayoutManager = new LinearLayoutManager(getActivity());
         routeListLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        /*
-            TODO: modificare l'inserimento dall'alto per adattarlo dinamicamente al riordinamento
-                    della lista tramite l'apposito bottone nella MainActivity
-         */
-        routeListLayoutManager.setReverseLayout(true);
-        routeListLayoutManager.setStackFromEnd(true);
-
-        routeListLayoutManager.scrollToPosition(0);
 
         routeListRecyclerView.setLayoutManager(routeListLayoutManager);
         routeListRecyclerView.setHasFixedSize(true);
@@ -166,18 +158,23 @@ public class RouteListFragment extends Fragment{
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(RouteListAdapter.ROUTE_ITEM, route);
 
-                    /*routeListAdapter.notifyDataSetChanged();
-                    routeListRecyclerView.scrollToPosition(routeList.size()-1);*/
-
                     Intent routeClickedIntent = new Intent(new Intent(v.getContext(), RouteActivity.class));
                     routeClickedIntent.putExtras(bundle);
 
                     dialog.dismiss();
+
+                    updateList();
 
                     v.getContext().startActivity(routeClickedIntent);
 
                 }
             }
         });
+    }
+
+    public void updateList(){
+        if(routeListAdapter != null){
+            routeListAdapter.notifyDataSetChanged();
+        }
     }
 }

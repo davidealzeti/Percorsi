@@ -10,7 +10,7 @@
     <string name="route_info_tab_title">Percorso</string>
     <string name="route_map_tab_title">Mappa</string>
 
-    <!-- CreateRouteDialog Strings  -->
+    <!-- RouteCreationDialog Strings  -->
     <string name="create_route_dialog_title">Nuovo Percorso</string>
     <string name="create_route_dialog_name_hint">Nome</string>
     <string name="create_route_dialog_name_request">Dai un nome al tuo percorso..</string>
@@ -25,5 +25,14 @@
     <string name="create_route_dialog_cancel_choice">Annulla</string>
     <string name="create_route_dialog_confirm_choice">Crea</string>
     <string name="create_route_dialog_no_name_error">Inserisci un nome</string>
+
+    <!-- RouteListSortingDialog Strings    -->
+    <string name="sorting_dialog_title">Ordina i tuoi Percorsi</string>
+    <string name="sorting_dialog_confirm">Conferma</string>
+
+    <string-array name="sorting_options_array">
+        <item name="sort_by_name">Nome</item>
+        <item name="sort_by_latitude">Latitudine</item>
+    </string-array>
 
 </resources>
