@@ -24,6 +24,7 @@ public class RouteInfoFragment extends Fragment {
     private Route clickedRoute = null;
 
     private TextView routeNameTextView, meansOfTransportTextView, startLatTextView, startLonTextView;
+    private TextView routeDateTextView, routeLengthTextView, averageSpeedTextView, averageAccuracyTextView;
 
     public RouteInfoFragment() {
         // Required empty public constructor
@@ -55,6 +56,10 @@ public class RouteInfoFragment extends Fragment {
         meansOfTransportTextView = view.findViewById(R.id.means_of_transport_text_view);
         startLatTextView = view.findViewById(R.id.route_start_lat_text_view);
         startLonTextView = view.findViewById(R.id.route_start_lon_text_view);
+        routeDateTextView = view.findViewById(R.id.route_date_text_view);
+        routeLengthTextView = view.findViewById(R.id.route_length_text_view);
+        averageSpeedTextView = view.findViewById(R.id.route_avg_speed_text_view);
+        averageAccuracyTextView = view.findViewById(R.id.route_avg_accuracy_text_view);
     }
 
     private void setupRouteInfo(Route route){
@@ -64,6 +69,10 @@ public class RouteInfoFragment extends Fragment {
             meansOfTransportTextView.setText(route.getMeansOfTransport());
             startLatTextView.setText(String.valueOf(route.getStartLatitude()));
             startLonTextView.setText(String.valueOf(route.getStartLongitude()));
+            routeDateTextView.setText(route.getFormattedDate());
+            routeLengthTextView.setText(String.valueOf(route.getRouteLength()));
+            averageSpeedTextView.setText(String.valueOf(route.getAverageSpeed()));
+            averageAccuracyTextView.setText(String.valueOf(route.getAverageAccuracy()));
         }
         else Log.d(TAG, "Il percorso cliccato sulla lista risulta essere null");
     }

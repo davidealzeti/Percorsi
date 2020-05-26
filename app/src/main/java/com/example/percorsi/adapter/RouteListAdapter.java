@@ -2,7 +2,6 @@ package com.example.percorsi.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,9 +18,11 @@ import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.AppPreferencesManager;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 /**
  * Classe che gestisce la lista dei Percorsi.
@@ -60,15 +61,15 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
             });
         }
 
-        public void setText(String name, String startLat, String startLon){
+        public void setText(String name, String startLat, String date){
             Log.d(TAG, "Aggiunto testo a un elemento della lista");
             TextView routeItemNameTextView = v.findViewById(R.id.route_item_name_text_view);
             TextView routeItemStartLatTextView = v.findViewById(R.id.route_item_start_lat_text_view);
-            TextView routeItemStartLonTextView = v.findViewById(R.id.route_item_start_lon_text_view);
+            TextView routeItemDateTextView = v.findViewById(R.id.route_item_date_text_view);
 
             routeItemNameTextView.setText(name);
             routeItemStartLatTextView.setText(startLat);
-            routeItemStartLonTextView.setText(startLon);
+            routeItemDateTextView.setText(date);
         }
     }
 
@@ -94,9 +95,11 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
         Route route = routeDataSet.get(position);
         String name = route.getName();
         String startLat = new DecimalFormat("##.##").format(route.getStartLatitude());
-        String startLon = new DecimalFormat("##.##").format(route.getStartLongitude());
 
-        holder.setText(name, startLat, startLon);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        String date = formatter.format(route.getDate());
+
+        holder.setText(name, startLat, date);
     }
 
     @Override
@@ -108,6 +111,16 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
     private void sortListByUserPreference(Context context){
         Log.d(TAG, "Riordinata la lista");
         switch (AppPreferencesManager.getSortingPreference(context)){
+            case AppPreferencesManager.SORT_BY_MOST_RECENT:
+                sortListByMostRecent(); break;
+            case AppPreferencesManager.SORT_BY_LEAST_RECENT:
+                sortListByLeastRecent(); break;
+            case AppPreferencesManager.SORT_BY_ROUTE_LENGTH:
+                sortListByRouteLength(); break;
+            case AppPreferencesManager.SORT_BY_AVERAGE_SPEED:
+                sortListByAverageSpeed(); break;
+            case AppPreferencesManager.SORT_BY_DURATION:
+                sortListByDuration(); break;
             case AppPreferencesManager.SORT_BY_NAME:
                 sortListByName(); break;
             case AppPreferencesManager.SORT_BY_DOUBLE:
@@ -141,5 +154,38 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
                 }
             });
         }
+    }
+
+    private void sortListByMostRecent(){
+        Log.d(TAG, "Ordinata la lista dagli elementi più recenti");
+        if (routeDataSet.size() > 0){
+            Collections.sort(this.routeDataSet, Route.SORT_BY_MOST_RECENT);
+        }
+    }
+
+    private void sortListByLeastRecent(){
+        Log.d(TAG, "Ordinata la lista dagli elementi meno recenti");
+        if (routeDataSet.size() > 0){
+            Collections.sort(this.routeDataSet, Route.SORT_BY_LEAST_RECENT);
+        }
+    }
+
+    private void sortListByRouteLength(){
+        Log.d(TAG, "Ordinata la lista per lunghezza Percorso");
+        if (routeDataSet.size() > 0){
+            Collections.sort(this.routeDataSet, Route.SORT_BY_ROUTE_LENGTH);
+        }
+    }
+
+    private void sortListByAverageSpeed(){
+        Log.d(TAG, "Ordinata la lista per velocità media");
+        if (routeDataSet.size() > 0){
+            Collections.sort(this.routeDataSet, Route.SORT_BY_AVERAGE_SPEED);
+        }
+    }
+
+    private void sortListByDuration(){
+        Log.d(TAG, "Ordinata la lista per durata complessiva");
+        //TODO: aggiungere riordinamento
     }
 }

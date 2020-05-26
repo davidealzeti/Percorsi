@@ -13,11 +13,11 @@ public class AppPreferencesManager {
     private static final String APP_PREFERENCES = "Preferenze";
 
     private static final String SORTING = "Ordinamento";
-    private static final int SORT_BY_MOST_RECENT = 0;
-    private static final int SORT_BY_LEAST_RECENT = 1;
-    private static final int SORT_BY_DISTANCE = 2;
-    private static final int SORT_BY_SPEED = 3;
-    private static final int SORT_BY_DURATION = 4;
+    public static final int SORT_BY_MOST_RECENT = 0;
+    public static final int SORT_BY_LEAST_RECENT = 1;
+    public static final int SORT_BY_ROUTE_LENGTH = 2;
+    public static final int SORT_BY_AVERAGE_SPEED = 3;
+    public static final int SORT_BY_DURATION = 4;
 
     //TODO: valori inseriti per il testing, da eliminare in seguito
     public static final int SORT_BY_NAME = -1;

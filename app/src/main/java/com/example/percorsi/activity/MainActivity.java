@@ -89,10 +89,35 @@ public class MainActivity extends AppCompatActivity {
                         switch (which){
                             case 0:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
-                                        AppPreferencesManager.SORT_BY_NAME);
+                                        AppPreferencesManager.SORT_BY_MOST_RECENT);
                                 routeListFragment.updateList();
                                 break;
                             case 1:
+                                AppPreferencesManager.setSortingPreference(getApplicationContext(),
+                                        AppPreferencesManager.SORT_BY_LEAST_RECENT);
+                                routeListFragment.updateList();
+                                break;
+                            case 2:
+                                AppPreferencesManager.setSortingPreference(getApplicationContext(),
+                                        AppPreferencesManager.SORT_BY_ROUTE_LENGTH);
+                                routeListFragment.updateList();
+                                break;
+                            case 3:
+                                AppPreferencesManager.setSortingPreference(getApplicationContext(),
+                                        AppPreferencesManager.SORT_BY_AVERAGE_SPEED);
+                                routeListFragment.updateList();
+                                break;
+                            case 4:
+                                AppPreferencesManager.setSortingPreference(getApplicationContext(),
+                                        AppPreferencesManager.SORT_BY_DURATION);
+                                routeListFragment.updateList();
+                                break;
+                            case 5:
+                                AppPreferencesManager.setSortingPreference(getApplicationContext(),
+                                        AppPreferencesManager.SORT_BY_NAME);
+                                routeListFragment.updateList();
+                                break;
+                            case 6:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_DOUBLE);
                                 routeListFragment.updateList();
@@ -100,11 +125,6 @@ public class MainActivity extends AppCompatActivity {
                             default:
                                 break;
                         }
-                    }
-                })
-                .setPositiveButton(R.string.sorting_dialog_confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });

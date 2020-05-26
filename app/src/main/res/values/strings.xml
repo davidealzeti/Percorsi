@@ -28,9 +28,13 @@
 
     <!-- RouteListSortingDialog Strings    -->
     <string name="sorting_dialog_title">Ordina i tuoi Percorsi</string>
-    <string name="sorting_dialog_confirm">Conferma</string>
 
     <string-array name="sorting_options_array">
+        <item name="sort_by_most_recent">Data (più recente)</item>
+        <item name="sort_by_least_recent">Data (meno recente)</item>
+        <item name="sort_by_route_length">Distanza percorsa</item>
+        <item name="sort_by_average_speed">Velocità media</item>
+        <item name="sort_by_route_duration">Durata</item>
         <item name="sort_by_name">Nome</item>
         <item name="sort_by_latitude">Latitudine</item>
     </string-array>
