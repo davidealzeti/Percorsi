@@ -39,4 +39,12 @@
         <item name="sort_by_latitude">Latitudine</item>
     </string-array>
 
+    <!-- Toast and Notifications Strings  -->
+    <string name="location_permission_denied_toast">L\'accesso al GPS è necessario per il funzionamento dell\'app.</string>
+    <string name="location_permission_denied_dialog_title">Posizione negata</string>
+    <string name="location_permission_denied_dialog_message">
+        L\'accesso al GPS è necessario per il funzionamento dell\'app.
+        Per favore, consenti l\'accesso.
+    </string>
+
 </resources>
