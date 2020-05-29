@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RouteListFragment routeListFragment = null;
 
-    private int selectedSortingOption = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,50 +79,45 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] sortingOptions = this.getResources().getStringArray(R.array.sorting_options_array);
 
+        int selectedOption = AppPreferencesManager.getSortingPreference(getApplicationContext());
+
         builder.setTitle(R.string.sorting_dialog_title)
-                .setSingleChoiceItems(sortingOptions, selectedSortingOption, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(sortingOptions, selectedOption, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        selectedSortingOption = which;
                         switch (which){
                             case 0:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_MOST_RECENT);
-                                routeListFragment.updateList();
                                 break;
                             case 1:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_LEAST_RECENT);
-                                routeListFragment.updateList();
                                 break;
                             case 2:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_ROUTE_LENGTH);
-                                routeListFragment.updateList();
                                 break;
                             case 3:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_AVERAGE_SPEED);
-                                routeListFragment.updateList();
                                 break;
                             case 4:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_DURATION);
-                                routeListFragment.updateList();
                                 break;
                             case 5:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_NAME);
-                                routeListFragment.updateList();
                                 break;
                             case 6:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_DOUBLE);
-                                routeListFragment.updateList();
                                 break;
                             default:
                                 break;
                         }
+                        routeListFragment.updateList();
                         dialog.dismiss();
                     }
                 });

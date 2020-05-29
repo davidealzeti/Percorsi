@@ -20,8 +20,8 @@ public class AppPreferencesManager {
     public static final int SORT_BY_DURATION = 4;
 
     //TODO: valori inseriti per il testing, da eliminare in seguito
-    public static final int SORT_BY_NAME = -1;
-    public static final int SORT_BY_DOUBLE = -2;
+    public static final int SORT_BY_NAME = 5;
+    public static final int SORT_BY_DOUBLE = 6;
 
     private AppPreferencesManager(){}
 

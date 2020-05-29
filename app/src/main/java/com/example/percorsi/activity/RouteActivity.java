@@ -9,7 +9,6 @@ import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.percorsi.R;
 import com.example.percorsi.adapter.RoutePagerAdapter;
