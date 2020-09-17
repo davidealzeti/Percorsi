@@ -32,7 +32,7 @@ public class Route implements Parcelable {
     private double averageSpeed = UNSET;
     private double averageAccuracy = UNSET;
 
-    //TODO: aggiungere Durata, Polyline e Foto scattata ai campi privati
+    //TODO: aggiungere EndTime ai campi privati
 
     public static final Comparator<Route> SORT_BY_MOST_RECENT = new Comparator<Route>() {
         @Override

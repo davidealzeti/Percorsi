@@ -1,5 +1,6 @@
 package com.example.percorsi.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,41 +11,30 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.percorsi.R;
 import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
 import com.example.percorsi.service.LocationService;
 import com.example.percorsi.utils.Utils;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.concurrent.Executor;
 
 /**
  * Classe che contiene la Mappa che mostra il Percorso dell'utente.
@@ -204,6 +194,7 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     }
 
     private class UpdateLocationReceiver extends BroadcastReceiver{
+        @SuppressLint("MissingPermission")
         @Override
         public void onReceive(Context context, Intent intent) {
             currentLocation = intent.getParcelableExtra(LocationService.EXTRA_LOCATION);
@@ -221,6 +212,7 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void updateLocationUI(){
         Log.d(TAG, "Chiamato updateLocationUI");
         try {

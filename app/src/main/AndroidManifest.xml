@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RouteActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.percorsi.activity.MainActivity" />
@@ -22,7 +23,8 @@
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
