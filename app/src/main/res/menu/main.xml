@@ -10,6 +10,7 @@
         android:title="@string/sorting_icon_title"
         app:showAsAction="ifRoom"/>
 
+    <!-- comment
     <item
         android:id="@+id/option_menu_icon"
         android:orderInCategory="101"
@@ -21,4 +22,5 @@
         android:orderInCategory="102"
         android:title="@string/app_info_icon_title"
         app:showAsAction="never" />
+    -->
 </menu>

@@ -26,6 +26,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.percorsi.R;
 import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
+import com.example.percorsi.persistence.RouteManager;
 import com.example.percorsi.service.LocationService;
 import com.example.percorsi.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,11 +37,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
+
 /**
  * Classe che contiene la Mappa che mostra il Percorso dell'utente.
  */
 public class RouteMapFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "MappaPercorso";
+
+    private static final double DONE = 73;
 
     private MapView mapView;
     private GoogleMap gMap;
@@ -83,9 +88,15 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "Chiamato onCreate");
         super.onCreate(savedInstanceState);
-        locationReceiver = new UpdateLocationReceiver();
-        getActivity().bindService(new Intent(getContext(), LocationService.class), boundServiceConnection,
-                Context.BIND_AUTO_CREATE);
+
+        retrieveRouteInfo();
+        Log.d(TAG, clickedRoute.toString());
+
+        if (clickedRoute.getDone() != DONE) {
+            locationReceiver = new UpdateLocationReceiver();
+            getActivity().bindService(new Intent(getContext(), LocationService.class), boundServiceConnection,
+                    Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
@@ -114,14 +125,17 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
             e.printStackTrace();
         }
 
-        retrieveRouteInfo();
-
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 Log.d(TAG, "Chiamato onMapReady");
                 gMap = googleMap;
                 gMap.setMinZoomPreference(DEFAULT_ZOOM);
+                if (clickedRoute.getDone() != DONE){
+                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clickedRoute.getStartLatitude(),
+                            clickedRoute.getStartLongitude()), DEFAULT_ZOOM));
+                    clickedRoute.addPolylineToGoogleMap(gMap);
+                }
 
             }
         });
@@ -170,9 +184,14 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
         else Log.d(TAG, "Il bundle risulta essere vuoto");
     }
 
+
+    @SuppressLint("RestrictedApi")
     private void retrieveAndSetStopRouteButton(View view){
         stopRouteButton = view.findViewById(R.id.stop_route_floating_button);
+        if (RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).getDone() == DONE)
+            stopRouteButton.setVisibility(View.INVISIBLE);
         stopRouteButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint({"MissingPermission", "RestrictedApi"})
             @Override
             public void onClick(View v) {
                 if (locationService != null){
@@ -180,6 +199,12 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
                     locationService.removeLocationUpdates();
                     isBound = false;
                     //TODO: la posizione sulla mappa dell'utente non deve cambiare una volta premuto il bottone
+                    gMap.setMyLocationEnabled(false);
+                    gMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    stopRouteButton.setVisibility(View.INVISIBLE);
+                    clickedRoute.setStopDate(new Date());
+                    clickedRoute.addPolylineToGoogleMap(gMap);
+                    RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).setDone(DONE);
                 }
             }
         });
@@ -201,8 +226,8 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
             if (isBound) {
                 updateLocationUI();
                 setMapViewToUserLocation(currentLocation);
+                clickedRoute.addLocationToLocationsArray(currentLocation);
             }else{
-                //TODO: dopo aver premuto il bottone non vengono più ricevuti update quindi questi metodi non vengono raggiunti
                 gMap.setMyLocationEnabled(false);
                 gMap.getUiSettings().setMyLocationButtonEnabled(false);
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));

@@ -1,5 +1,9 @@
 package com.example.percorsi.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,6 +17,8 @@ import android.widget.TextView;
 import com.example.percorsi.R;
 import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
+import com.example.percorsi.persistence.AppPreferencesManager;
+import com.example.percorsi.service.LocationService;
 
 /**
  * Classe che mostra le informazioni e i dati di un Percorso specifico selezionato dall'utente
@@ -21,6 +27,7 @@ import com.example.percorsi.model.Route;
 public class RouteInfoFragment extends Fragment {
     private static final String TAG = "InfoPercorso";
 
+    private UpdateRouteInfo routeInfo = null;
     private Route clickedRoute = null;
 
     private TextView routeNameTextView, meansOfTransportTextView, startLatTextView, startLonTextView;
@@ -41,12 +48,15 @@ public class RouteInfoFragment extends Fragment {
             Bundle bundle = getActivity().getIntent().getExtras();
             if (bundle != null){
                 this.clickedRoute = bundle.getParcelable(RouteListAdapter.ROUTE_ITEM);
+                AppPreferencesManager.setMeansOfTransport(getContext(), clickedRoute.getMeansOfTransport());
             }
             else Log.d(TAG, "Il bundle arrivato alla RouteActivity risulta essere vuoto");
         }
 
         setupUI(rootView);
         setupRouteInfo(clickedRoute);
+
+        routeInfo = new UpdateRouteInfo();
 
         return rootView;
     }
@@ -57,7 +67,6 @@ public class RouteInfoFragment extends Fragment {
         startLatTextView = view.findViewById(R.id.route_start_lat_text_view);
         startLonTextView = view.findViewById(R.id.route_start_lon_text_view);
         routeDateTextView = view.findViewById(R.id.route_date_text_view);
-        routeLengthTextView = view.findViewById(R.id.route_length_text_view);
         averageSpeedTextView = view.findViewById(R.id.route_avg_speed_text_view);
         averageAccuracyTextView = view.findViewById(R.id.route_avg_accuracy_text_view);
     }
@@ -70,10 +79,23 @@ public class RouteInfoFragment extends Fragment {
             startLatTextView.setText(String.valueOf(route.getStartLatitude()));
             startLonTextView.setText(String.valueOf(route.getStartLongitude()));
             routeDateTextView.setText(route.getFormattedDate());
-            routeLengthTextView.setText(String.valueOf(route.getRouteLength()));
             averageSpeedTextView.setText(String.valueOf(route.getAverageSpeed()));
             averageAccuracyTextView.setText(String.valueOf(route.getAverageAccuracy()));
         }
         else Log.d(TAG, "Il percorso cliccato sulla lista risulta essere null");
+    }
+
+    private class UpdateRouteInfo extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Message received with location");
+            Location currentLocation = intent.getParcelableExtra(LocationService.EXTRA_LOCATION);
+            clickedRoute.addLocationToLocationsArray(currentLocation);
+            startLatTextView.setText(String.valueOf(currentLocation.getLatitude()));
+            startLonTextView.setText((String.valueOf(currentLocation.getLongitude())));
+            averageSpeedTextView.setText(String.valueOf(currentLocation.getSpeed()));
+            averageAccuracyTextView.setText(String.valueOf(currentLocation.getAccuracy()));
+        }
     }
 }

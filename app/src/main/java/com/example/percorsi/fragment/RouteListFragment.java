@@ -27,6 +27,7 @@ import com.example.percorsi.persistence.RouteManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -40,7 +41,7 @@ public class RouteListFragment extends Fragment{
     private LinearLayoutManager routeListLayoutManager = null;
     private RouteListAdapter routeListAdapter = null;
 
-    private ArrayList<Route> routeList = null;
+    private List<Route> routeList = null;
 
     private FloatingActionButton addRouteButton = null;
 
@@ -86,7 +87,7 @@ public class RouteListFragment extends Fragment{
         routeListRecyclerView.setLayoutManager(routeListLayoutManager);
         routeListRecyclerView.setHasFixedSize(true);
 
-        this.routeList = RouteManager.getInstance().getRouteList();
+        this.routeList = RouteManager.getInstance(getContext()).getRouteList();
         routeListAdapter = new RouteListAdapter(routeList);
         routeListRecyclerView.setAdapter(routeListAdapter);
 
@@ -153,7 +154,7 @@ public class RouteListFragment extends Fragment{
 
                     Route route = new Route(routeName, meansOfTransport,
                             new Random().nextDouble(), new Random().nextDouble());
-                    RouteManager.getInstance().addRoute(route);
+                    RouteManager.getInstance(getContext()).addRoute(route);
 
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(RouteListAdapter.ROUTE_ITEM, route);

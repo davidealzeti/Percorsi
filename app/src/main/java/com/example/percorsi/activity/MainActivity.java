@@ -63,18 +63,19 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Cliccato menu: Ordinamento");
                 openRouteListSortingDialog();
                 return true;
+                /*
             case R.id.option_menu_icon:
                 Log.d(TAG, "Cliccato menu: Opzioni");
                 return true;
             case R.id.app_info_icon:
                 Log.d(TAG, "Cliccato menu: Informazioni");
                 return true;
+                 */
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    //TODO: controllare se la chiamata a updateList() non debba essere fatta in background
     private void openRouteListSortingDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] sortingOptions = this.getResources().getStringArray(R.array.sorting_options_array);
@@ -104,13 +105,9 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case 4:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
-                                        AppPreferencesManager.SORT_BY_DURATION);
-                                break;
-                            case 5:
-                                AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_NAME);
                                 break;
-                            case 6:
+                            case 5:
                                 AppPreferencesManager.setSortingPreference(getApplicationContext(),
                                         AppPreferencesManager.SORT_BY_DOUBLE);
                                 break;

@@ -1,5 +1,6 @@
 package com.example.percorsi.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,9 +10,14 @@ import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.percorsi.R;
+import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.adapter.RoutePagerAdapter;
+import com.example.percorsi.model.Route;
+import com.example.percorsi.persistence.RouteManager;
 import com.google.android.material.tabs.TabLayout;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -33,10 +39,20 @@ public class RouteActivity extends AppCompatActivity {
     private ViewPager viewPager = null;
     private TabLayout tabLayout = null;
 
+    private Route clickedRoute = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_fragment_activity_with_tabs);
+
+        if (savedInstanceState == null){
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null){
+                this.clickedRoute = bundle.getParcelable(RouteListAdapter.ROUTE_ITEM);
+            }
+            else Log.d(TAG, "Il bundle arrivato alla RouteActivity risulta essere vuoto");
+        }
 
         setupToolbar();
         setupViewPager(getApplicationContext());
@@ -57,6 +73,23 @@ public class RouteActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.trash_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.trash_icon) {
+            Log.d(TAG, "Cliccato menu: Ordinamento");
+            RouteManager.getInstance(getApplicationContext()).removeRoute(clickedRoute);
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupViewPager(Context context){

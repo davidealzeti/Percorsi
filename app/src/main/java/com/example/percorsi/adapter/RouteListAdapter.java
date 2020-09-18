@@ -17,11 +17,11 @@ import com.example.percorsi.activity.RouteActivity;
 import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.AppPreferencesManager;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -61,14 +61,14 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
             });
         }
 
-        public void setText(String name, String startLat, String date){
+        public void setText(String name, String avgSpeed, String date){
             Log.d(TAG, "Aggiunto testo a un elemento della lista");
             TextView routeItemNameTextView = v.findViewById(R.id.route_item_name_text_view);
-            TextView routeItemStartLatTextView = v.findViewById(R.id.route_item_start_lat_text_view);
+            TextView routeItemAvgSpeedTextView = v.findViewById(R.id.route_item_avg_speed_text_view);
             TextView routeItemDateTextView = v.findViewById(R.id.route_item_date_text_view);
 
             routeItemNameTextView.setText(name);
-            routeItemStartLatTextView.setText(startLat);
+            routeItemAvgSpeedTextView.setText(avgSpeed);
             routeItemDateTextView.setText(date);
         }
     }
@@ -76,6 +76,10 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
     public RouteListAdapter(ArrayList<Route> routeDataSet){
         Log.d(TAG, "Costruttore RouteAdapter chiamato");
         this.routeDataSet = routeDataSet;
+    }
+
+    public RouteListAdapter(List<Route> routeDataSet){
+        this.routeDataSet = new ArrayList<>(routeDataSet);
     }
 
     @NonNull
@@ -94,12 +98,12 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
 
         Route route = routeDataSet.get(position);
         String name = route.getName();
-        String startLat = new DecimalFormat("##.##").format(route.getStartLatitude());
+        String avgSpeed = String.valueOf(route.getAverageSpeed());
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
-        String date = formatter.format(route.getDate());
+        String date = formatter.format(route.getStartDate());
 
-        holder.setText(name, startLat, date);
+        holder.setText(name, avgSpeed, date);
     }
 
     @Override
@@ -119,8 +123,6 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
                 sortListByRouteLength(); break;
             case AppPreferencesManager.SORT_BY_AVERAGE_SPEED:
                 sortListByAverageSpeed(); break;
-            case AppPreferencesManager.SORT_BY_DURATION:
-                sortListByDuration(); break;
             case AppPreferencesManager.SORT_BY_NAME:
                 sortListByName(); break;
             case AppPreferencesManager.SORT_BY_DOUBLE:

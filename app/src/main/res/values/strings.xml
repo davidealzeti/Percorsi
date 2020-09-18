@@ -34,7 +34,6 @@
         <item name="sort_by_least_recent">Data (meno recente)</item>
         <item name="sort_by_route_length">Distanza percorsa</item>
         <item name="sort_by_average_speed">Velocità media</item>
-        <item name="sort_by_route_duration">Durata</item>
         <item name="sort_by_name">Nome</item>
         <item name="sort_by_latitude">Latitudine</item>
     </string-array>
