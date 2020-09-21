@@ -18,7 +18,7 @@ public class RouteManager {
     private static final String TAG = "ListaPercorsi";
 
     private static RouteManager instance = null;
-    private ArrayList<Route> routeList = null;
+    private List<Route> routeList = null;
     private Context context = null;
     private AppDatabase db = null;
     private RouteDao routeDao = null;
@@ -45,11 +45,6 @@ public class RouteManager {
     public void addRoute(Route route){
         Log.d(TAG, "Aggiunto un Percorso alla lista -> " + route.toString());
         this.routeDao.insertRoute(route);
-    }
-
-    public void removeRoute(int position){
-        Log.d(TAG, "Rimosso un Percorso dalla lista alla posizione: " + position);
-        routeList.remove(position);
     }
 
     public void removeRoute(Route route){
