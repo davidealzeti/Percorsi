@@ -174,12 +174,15 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     public void onDestroyView() {
         Log.d(TAG, "Chiamato onDestroyView");
         super.onDestroyView();
+        locationService.removeLocationUpdates();
+        isBound = false;
     }
 
     private void retrieveRouteInfo(){
         Bundle bundle = getActivity().getIntent().getExtras();
         if (bundle != null){
             this.clickedRoute = bundle.getParcelable(RouteListAdapter.ROUTE_ITEM);
+            this.clickedRoute = RouteManager.getInstance(getContext()).getRouteWithName(this.clickedRoute.getName());
         }
         else Log.d(TAG, "Il bundle risulta essere vuoto");
     }
@@ -188,8 +191,13 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     @SuppressLint("RestrictedApi")
     private void retrieveAndSetStopRouteButton(View view){
         stopRouteButton = view.findViewById(R.id.stop_route_floating_button);
-        if (RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).getDone() == DONE)
+        if (RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).getDone() == DONE){
+            Log.d(TAG, "Il percorso selezionato è già stato completato");
             stopRouteButton.setVisibility(View.INVISIBLE);
+        }
+
+        Log.d(TAG, "Percorso selezionato: " + RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).toString());
+
         stopRouteButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint({"MissingPermission", "RestrictedApi"})
             @Override
@@ -203,8 +211,9 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
                     gMap.getUiSettings().setMyLocationButtonEnabled(false);
                     stopRouteButton.setVisibility(View.INVISIBLE);
                     clickedRoute.setStopDate(new Date());
-                    clickedRoute.addPolylineToGoogleMap(gMap);
                     RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).setDone(DONE);
+                    //TODO: cercare di fare l'update dei percorsi nel DB
+                    //RouteManager.getInstance(getContext()).updateRoutes(clickedRoute);
                 }
             }
         });
@@ -227,6 +236,7 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
                 updateLocationUI();
                 setMapViewToUserLocation(currentLocation);
                 clickedRoute.addLocationToLocationsArray(currentLocation);
+                clickedRoute.addPolylineToGoogleMap(gMap);
             }else{
                 gMap.setMyLocationEnabled(false);
                 gMap.getUiSettings().setMyLocationButtonEnabled(false);

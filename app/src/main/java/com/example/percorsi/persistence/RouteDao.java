@@ -29,4 +29,7 @@ public interface RouteDao {
     @Query("DELETE FROM routes")
     void deleteAll();
 
+    @Update
+    void updateRoutes(Route... routes);
+
 }

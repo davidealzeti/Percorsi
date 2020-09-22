@@ -16,6 +16,7 @@ import com.example.percorsi.R;
 import com.example.percorsi.activity.RouteActivity;
 import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.AppPreferencesManager;
+import com.example.percorsi.persistence.RouteManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,8 +34,9 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
     public static final String ROUTE_ITEM = "Percorso";
 
     private Context context = null;
+    private static RouteListAdapter instance = null;
 
-    private ArrayList<Route> routeDataSet;
+    private List<Route> routeDataSet;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private View v = null;
@@ -61,25 +63,52 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
             });
         }
 
-        public void setText(String name, String avgSpeed, String date){
+        public void setText(String name, String meanOfTransport, String date){
             Log.d(TAG, "Aggiunto testo a un elemento della lista");
             TextView routeItemNameTextView = v.findViewById(R.id.route_item_name_text_view);
-            TextView routeItemAvgSpeedTextView = v.findViewById(R.id.route_item_avg_speed_text_view);
+            TextView routeItemMeanOfTransport = v.findViewById(R.id.route_item_means_of_transport);
             TextView routeItemDateTextView = v.findViewById(R.id.route_item_date_text_view);
 
             routeItemNameTextView.setText(name);
-            routeItemAvgSpeedTextView.setText(avgSpeed);
+            routeItemMeanOfTransport.setText(meanOfTransport);
             routeItemDateTextView.setText(date);
         }
     }
 
+    /*
     public RouteListAdapter(ArrayList<Route> routeDataSet){
         Log.d(TAG, "Costruttore RouteAdapter chiamato");
         this.routeDataSet = routeDataSet;
     }
+    */
 
-    public RouteListAdapter(List<Route> routeDataSet){
-        this.routeDataSet = new ArrayList<>(routeDataSet);
+    private RouteListAdapter(Context context){
+        Log.d(TAG, "Costruttore RouteAdapter Chiamato");
+        this.context = context;
+
+        if(this.routeDataSet == null){
+            this.routeDataSet = RouteManager.getInstance(context).getRouteList();
+        }
+    }
+
+    public static RouteListAdapter getInstance(Context context) {
+        if(instance == null){
+            instance = new RouteListAdapter(context);
+        }
+        return instance;
+    }
+
+    public void addElementToList(Route route){
+        Log.d(TAG, "Aggiunto un elemento alla lista: " + route.toString());
+        RouteManager.getInstance(context).addRoute(route);
+        this.routeDataSet.add(route);
+    }
+
+    public void removeElementFromList(Route route){
+        Log.d(TAG, "Rimosso un elemento dalla lista: " + route.toString());
+        RouteManager.getInstance(context).removeRoute(route);
+        Log.d(TAG, String.valueOf(this.routeDataSet.remove(route)));
+        this.notifyDataSetChanged();
     }
 
     @NonNull
@@ -98,12 +127,12 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.View
 
         Route route = routeDataSet.get(position);
         String name = route.getName();
-        String avgSpeed = String.valueOf(route.getAverageSpeed());
+        String meanOfTransport = route.getMeansOfTransport();
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
         String date = formatter.format(route.getStartDate());
 
-        holder.setText(name, avgSpeed, date);
+        holder.setText(name, meanOfTransport, date);
     }
 
     @Override

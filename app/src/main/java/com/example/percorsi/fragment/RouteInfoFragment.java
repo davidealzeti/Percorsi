@@ -3,10 +3,13 @@ package com.example.percorsi.fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,8 @@ import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.AppPreferencesManager;
 import com.example.percorsi.service.LocationService;
 
+import java.text.DecimalFormat;
+
 /**
  * Classe che mostra le informazioni e i dati di un Percorso specifico selezionato dall'utente
  * tra la lista dei Percorsi disponibili.
@@ -27,7 +32,7 @@ import com.example.percorsi.service.LocationService;
 public class RouteInfoFragment extends Fragment {
     private static final String TAG = "InfoPercorso";
 
-    private UpdateRouteInfo routeInfo = null;
+    private UpdateRouteInfoReceiver routeInfoReceiver = null;
     private Route clickedRoute = null;
 
     private TextView routeNameTextView, meansOfTransportTextView, startLatTextView, startLonTextView;
@@ -35,6 +40,15 @@ public class RouteInfoFragment extends Fragment {
 
     public RouteInfoFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: aggiunto UpdateRouteInfoReceiver");
+        routeInfoReceiver = new UpdateRouteInfoReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(routeInfoReceiver,
+                new IntentFilter(LocationService.ACTION_NAME));
     }
 
     @Override
@@ -55,8 +69,6 @@ public class RouteInfoFragment extends Fragment {
 
         setupUI(rootView);
         setupRouteInfo(clickedRoute);
-
-        routeInfo = new UpdateRouteInfo();
 
         return rootView;
     }
@@ -85,7 +97,7 @@ public class RouteInfoFragment extends Fragment {
         else Log.d(TAG, "Il percorso cliccato sulla lista risulta essere null");
     }
 
-    private class UpdateRouteInfo extends BroadcastReceiver{
+    private class UpdateRouteInfoReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -94,8 +106,18 @@ public class RouteInfoFragment extends Fragment {
             clickedRoute.addLocationToLocationsArray(currentLocation);
             startLatTextView.setText(String.valueOf(currentLocation.getLatitude()));
             startLonTextView.setText((String.valueOf(currentLocation.getLongitude())));
-            averageSpeedTextView.setText(String.valueOf(currentLocation.getSpeed()));
+
+            String speed = new DecimalFormat("##.##").format(currentLocation.getSpeed()) + " km/h";
+            averageSpeedTextView.setText(speed);
+
             averageAccuracyTextView.setText(String.valueOf(currentLocation.getAccuracy()));
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: rimosso UpdateRouteInfoReceiver");
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(routeInfoReceiver);
     }
 }

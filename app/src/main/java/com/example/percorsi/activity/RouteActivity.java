@@ -2,12 +2,15 @@ package com.example.percorsi.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -85,11 +88,35 @@ public class RouteActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.trash_icon) {
             Log.d(TAG, "Cliccato menu: Ordinamento");
-            RouteManager.getInstance(getApplicationContext()).removeRoute(clickedRoute);
-            this.finish();
+            showConfirmDeleteRouteDialog(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showConfirmDeleteRouteDialog(final Activity activity){
+        Log.d(TAG, "Mostrato dialog di conferma eliminazione Percorso");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Sei sicuro di voler eliminare questo Percorso?");
+
+        builder.setCancelable(true);
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RouteListAdapter.getInstance(getApplicationContext()).removeElementFromList(clickedRoute);
+                dialog.dismiss();
+                activity.finish();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void setupViewPager(Context context){

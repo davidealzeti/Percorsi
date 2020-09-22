@@ -2,12 +2,14 @@ package com.example.percorsi.model;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Modello che rappresenta i Percorsi effettuati dall'utente.
@@ -94,16 +97,16 @@ public class Route implements Parcelable {
     };
 
 
-    public Route(String name, String meansOfTransport, double startLatitude, double startLongitude){
+    public Route(String name, String meansOfTransport){
         Log.d(TAG, "Chiamato costruttore della classe Route");
         this.name = name;
         this.meansOfTransport = meansOfTransport;
         this.startDate = new Date();
-        this.startLatitude = startLatitude;
-        this.startLongitude = startLongitude;
+        this.startLatitude = 0;
+        this.startLongitude = 0;
         this.locationsArray = new ArrayList<>();
-        this.averageAccuracy = startLatitude;
-        this.averageSpeed = startLongitude;
+        this.averageAccuracy = 0;
+        this.averageSpeed = 0;
     }
 
     private Route(Parcel in) {
@@ -215,6 +218,7 @@ public class Route implements Parcelable {
                 tot += loc.getSpeed();
             }
             averageSpeed = tot / locationsArray.size();
+            averageSpeed = averageSpeed * (18.0/5.0);
             return averageSpeed;
         }
         return 0;
@@ -268,6 +272,23 @@ public class Route implements Parcelable {
         options.color(Color.BLUE);
         options.width(12);
         routePolyline = gMap.addPolyline(options);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Route route = (Route) o;
+        return name.equals(route.name) &&
+                Objects.equals(meansOfTransport, route.meansOfTransport) &&
+                Objects.equals(startDate, route.startDate);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, meansOfTransport, startDate);
     }
 
     @NonNull

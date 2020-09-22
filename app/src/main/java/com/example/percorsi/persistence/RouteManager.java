@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.room.Room;
 
+import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
 
 import java.util.ArrayList;
@@ -42,6 +43,11 @@ public class RouteManager {
         return instance;
     }
 
+    public void updateRoutes(Route... routes){
+        Log.d(TAG, "Aggiornamento dei percorsi nel DB");
+        this.routeDao.updateRoutes(routes);
+    }
+
     public void addRoute(Route route){
         Log.d(TAG, "Aggiunto un Percorso alla lista -> " + route.toString());
         this.routeDao.insertRoute(route);
@@ -59,5 +65,10 @@ public class RouteManager {
     public List<Route> getRouteList(){
         Log.d(TAG, "Ritornata la lista completa dei Percorsi");
         return this.routeDao.getAll();
+    }
+
+    public void deleteAllRoutes(){
+        Log.d(TAG, "Rimossi tutti i Percorsi nel DB");
+        this.routeDao.deleteAll();
     }
 }

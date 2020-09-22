@@ -88,7 +88,7 @@ public class RouteListFragment extends Fragment{
         routeListRecyclerView.setHasFixedSize(true);
 
         this.routeList = RouteManager.getInstance(getContext()).getRouteList();
-        routeListAdapter = new RouteListAdapter(routeList);
+        routeListAdapter = RouteListAdapter.getInstance(getContext());
         routeListRecyclerView.setAdapter(routeListAdapter);
 
     }
@@ -152,9 +152,8 @@ public class RouteListFragment extends Fragment{
                     String routeName = nameEditText.getText().toString();
                     String meansOfTransport = meansSpinner.getSelectedItem().toString();
 
-                    Route route = new Route(routeName, meansOfTransport,
-                            new Random().nextDouble(), new Random().nextDouble());
-                    RouteManager.getInstance(getContext()).addRoute(route);
+                    Route route = new Route(routeName, meansOfTransport);
+                    RouteListAdapter.getInstance(getContext()).addElementToList(route);
 
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(RouteListAdapter.ROUTE_ITEM, route);
@@ -175,7 +174,9 @@ public class RouteListFragment extends Fragment{
 
     public void updateList(){
         if(routeListAdapter != null){
+            Log.d(TAG, "Lista aggiornata");
             routeListAdapter.notifyDataSetChanged();
         }
+        Log.d(TAG, "Impossibile aggiornare la lista: routeListAdapter è null");
     }
 }
