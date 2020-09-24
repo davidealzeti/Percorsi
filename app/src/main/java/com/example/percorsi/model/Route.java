@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class Route implements Parcelable {
     private static final String TAG = "Percorso";
 
     private static final double UNSET = 0;
-    private static final double DONE = 73;
+    public static final double DONE = 73;
 
     public static final String ON_FOOT = "A piedi";
     public static final String BY_CAR = "In macchina";
@@ -57,9 +58,10 @@ public class Route implements Parcelable {
     private double routeLength = UNSET;
     private double averageSpeed;
     private double averageAccuracy;
+    @ColumnInfo(name = "done")
     private double done = UNSET;
 
-    private ArrayList<Location> locationsArray;
+    private List<Location> locationsArray;
     @Ignore
     private Polyline routePolyline;
 
@@ -203,11 +205,11 @@ public class Route implements Parcelable {
         return routeLength;
     }
 
-    public ArrayList<Location> getLocationsArray() {
+    public List<Location> getLocationsArray() {
         return locationsArray;
     }
 
-    public void setLocationsArray(ArrayList<Location> locationsArray) {
+    public void setLocationsArray(List<Location> locationsArray) {
         this.locationsArray = locationsArray;
     }
 
@@ -219,9 +221,8 @@ public class Route implements Parcelable {
             }
             averageSpeed = tot / locationsArray.size();
             averageSpeed = averageSpeed * (18.0/5.0);
-            return averageSpeed;
         }
-        return 0;
+        return averageSpeed;
     }
 
     public double getAverageAccuracy() {
@@ -231,9 +232,8 @@ public class Route implements Parcelable {
                 tot += loc.getAccuracy();
             }
             averageAccuracy = tot / locationsArray.size();
-            return averageAccuracy;
         }
-        return 0;
+        return averageAccuracy;
     }
 
     public Date getStopDate() {

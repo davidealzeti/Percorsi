@@ -21,6 +21,7 @@ import com.example.percorsi.R;
 import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
 import com.example.percorsi.persistence.AppPreferencesManager;
+import com.example.percorsi.persistence.RouteManager;
 import com.example.percorsi.service.LocationService;
 
 import java.text.DecimalFormat;
@@ -88,11 +89,13 @@ public class RouteInfoFragment extends Fragment {
             Log.d(TAG, "Impostazione del testo sulle TextView");
             routeNameTextView.setText(route.getName());
             meansOfTransportTextView.setText(route.getMeansOfTransport());
-            startLatTextView.setText(String.valueOf(route.getStartLatitude()));
-            startLonTextView.setText(String.valueOf(route.getStartLongitude()));
+            startLatTextView.setText(String.valueOf(RouteManager.getInstance(getContext()).getRouteWithName(route.getName()).getStartLatitude()));
+            startLonTextView.setText(String.valueOf(RouteManager.getInstance(getContext()).getRouteWithName(route.getName()).getStartLongitude()));
             routeDateTextView.setText(route.getFormattedDate());
-            averageSpeedTextView.setText(String.valueOf(route.getAverageSpeed()));
-            averageAccuracyTextView.setText(String.valueOf(route.getAverageAccuracy()));
+
+            String speed = formatDouble(RouteManager.getInstance(getContext()).getRouteWithName(route.getName()).getAverageSpeed()) + " km/h";
+            averageSpeedTextView.setText(speed);
+            averageAccuracyTextView.setText(formatDouble(RouteManager.getInstance(getContext()).getRouteWithName(route.getName()).getAverageAccuracy()));
         }
         else Log.d(TAG, "Il percorso cliccato sulla lista risulta essere null");
     }
@@ -107,7 +110,7 @@ public class RouteInfoFragment extends Fragment {
             startLatTextView.setText(String.valueOf(currentLocation.getLatitude()));
             startLonTextView.setText((String.valueOf(currentLocation.getLongitude())));
 
-            String speed = new DecimalFormat("##.##").format(currentLocation.getSpeed()) + " km/h";
+            String speed = formatDouble(currentLocation.getSpeed()) + " km/h";
             averageSpeedTextView.setText(speed);
 
             averageAccuracyTextView.setText(String.valueOf(currentLocation.getAccuracy()));
@@ -119,5 +122,9 @@ public class RouteInfoFragment extends Fragment {
         super.onDestroy();
         Log.d(TAG, "onDestroy: rimosso UpdateRouteInfoReceiver");
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(routeInfoReceiver);
+    }
+
+    private String formatDouble(double num){
+        return new DecimalFormat("##.##").format(num);
     }
 }

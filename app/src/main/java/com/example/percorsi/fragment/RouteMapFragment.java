@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Classe che contiene la Mappa che mostra il Percorso dell'utente.
@@ -45,7 +46,7 @@ import java.util.Date;
 public class RouteMapFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "MappaPercorso";
 
-    private static final double DONE = 73;
+    private static final double DONE = Route.DONE;
 
     private MapView mapView;
     private GoogleMap gMap;
@@ -96,7 +97,7 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
             locationReceiver = new UpdateLocationReceiver();
             getActivity().bindService(new Intent(getContext(), LocationService.class), boundServiceConnection,
                     Context.BIND_AUTO_CREATE);
-        }
+        }else Log.d(TAG, "Service di localizzazione non connesso perchè percorso già completato");
     }
 
     @Override
@@ -131,12 +132,17 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
                 Log.d(TAG, "Chiamato onMapReady");
                 gMap = googleMap;
                 gMap.setMinZoomPreference(DEFAULT_ZOOM);
-                if (clickedRoute.getDone() != DONE){
-                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clickedRoute.getStartLatitude(),
-                            clickedRoute.getStartLongitude()), DEFAULT_ZOOM));
-                    clickedRoute.addPolylineToGoogleMap(gMap);
-                }
+                try {
+                    if (clickedRoute.getDone() == DONE){
+                        //clickedRoute.setLocationsArray(RouteManager.getInstance(getContext()).getLocationList(clickedRoute));
 
+                        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clickedRoute.getLocationsArray().get(0).getLatitude(),
+                                clickedRoute.getLocationsArray().get(0).getLongitude()), DEFAULT_ZOOM));
+                        clickedRoute.addPolylineToGoogleMap(gMap);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -174,8 +180,10 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     public void onDestroyView() {
         Log.d(TAG, "Chiamato onDestroyView");
         super.onDestroyView();
-        locationService.removeLocationUpdates();
-        isBound = false;
+        if (locationService != null) {
+            locationService.removeLocationUpdates();
+            isBound = false;
+        }
     }
 
     private void retrieveRouteInfo(){
@@ -211,9 +219,11 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
                     gMap.getUiSettings().setMyLocationButtonEnabled(false);
                     stopRouteButton.setVisibility(View.INVISIBLE);
                     clickedRoute.setStopDate(new Date());
-                    RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).setDone(DONE);
-                    //TODO: cercare di fare l'update dei percorsi nel DB
-                    //RouteManager.getInstance(getContext()).updateRoutes(clickedRoute);
+                    RouteManager.getInstance(getContext()).setStartLatitudeAndLongitude(clickedRoute, clickedRoute.getLocationsArray().get(0).getLatitude(),
+                            clickedRoute.getLocationsArray().get(0).getLongitude());
+                    RouteManager.getInstance(getContext()).setAverageSpeedAndAccuracy(clickedRoute, clickedRoute.getAverageSpeed(), clickedRoute.getAverageAccuracy());
+                    //RouteManager.getInstance(getContext()).setLocationList(clickedRoute, clickedRoute.getLocationsArray());
+                    RouteManager.getInstance(getContext()).setDone(clickedRoute.getName(), Route.DONE);
                 }
             }
         });

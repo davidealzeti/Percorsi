@@ -1,6 +1,7 @@
 package com.example.percorsi.persistence;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import androidx.room.Room;
@@ -48,6 +49,11 @@ public class RouteManager {
         this.routeDao.updateRoutes(routes);
     }
 
+    public void setDone(String name, double done){
+        Log.d(TAG, "Update nella tabella per il Percorso: " + name + " Done: " + done);
+        this.routeDao.setDone(name, done);
+    }
+
     public void addRoute(Route route){
         Log.d(TAG, "Aggiunto un Percorso alla lista -> " + route.toString());
         this.routeDao.insertRoute(route);
@@ -57,6 +63,28 @@ public class RouteManager {
         Log.d(TAG, "Rimosso un Percorso dalla lista -> " + route.toString());
         this.routeDao.delete(route);
     }
+
+    public void setStartLatitudeAndLongitude(Route route, double lat, double lon){
+        Log.d(TAG, "Salvatao il valore di latitudine e longitudine iniziale per il Percorso: " + route.getName());
+        this.routeDao.setStartLatitudeAndLongitude(route.getName(), lat, lon);
+    }
+
+    public void setAverageSpeedAndAccuracy(Route route, double speed, double accuracy){
+        Log.d(TAG, "Salvati i valori medi di velocità e accuratezza per il Percorso: " + route.getName());
+        this.routeDao.setAverageSpeedAndAccuracy(route.getName(), speed, accuracy);
+    }
+
+    /*
+    public List<Location> getLocationList(Route route){
+        Log.d(TAG, "Restituita la lista delle location per il Percorso: " + route.getName());
+        return this.routeDao.getLocationList(route.getName());
+    }
+
+    public void setLocationList(Route route, List<Location> list){
+        Log.d(TAG, "Impostata la lista delle location per il Percorso: " + route.getName());
+        this.routeDao.setLocationList(route.getName(), list);
+    }
+    */
 
     public Route getRouteWithName(String name){
         return this.routeDao.getRouteWithName(name);
