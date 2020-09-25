@@ -14,3 +14,4 @@
 .cxx
 libs/
 src/main/res/values/google_maps_api.xml
+/app/src/main/res/values/google_maps_key.xml
