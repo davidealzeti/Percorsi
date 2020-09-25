@@ -15,10 +15,11 @@
         android:id="@+id/dialog_name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:hint="@string/create_route_dialog_name_hint"
         android:layout_below="@+id/dialog_name_request_text_view"
-        android:autofillHints="@string/create_route_dialog_name_hint"/>
+        android:autofillHints="@string/create_route_dialog_name_hint"
+        android:hint="@string/create_route_dialog_name_hint"
+        android:inputType="textCapSentences"
+        android:maxLength="10" />
 
     <TextView
         android:id="@+id/dialog_means_request_text_view"

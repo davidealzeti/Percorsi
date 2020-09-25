@@ -26,6 +26,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.percorsi.R;
 import com.example.percorsi.adapter.RouteListAdapter;
 import com.example.percorsi.model.Route;
+import com.example.percorsi.persistence.RouteManager;
 import com.example.percorsi.service.LocationService;
 import com.example.percorsi.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,11 +37,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * Classe che contiene la Mappa che mostra il Percorso dell'utente.
  */
 public class RouteMapFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "MappaPercorso";
+
+    private static final double DONE = Route.DONE;
 
     private MapView mapView;
     private GoogleMap gMap;
@@ -83,9 +89,15 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "Chiamato onCreate");
         super.onCreate(savedInstanceState);
-        locationReceiver = new UpdateLocationReceiver();
-        getActivity().bindService(new Intent(getContext(), LocationService.class), boundServiceConnection,
-                Context.BIND_AUTO_CREATE);
+
+        retrieveRouteInfo();
+        Log.d(TAG, clickedRoute.toString());
+
+        if (clickedRoute.getDone() != DONE) {
+            locationReceiver = new UpdateLocationReceiver();
+            getActivity().bindService(new Intent(getContext(), LocationService.class), boundServiceConnection,
+                    Context.BIND_AUTO_CREATE);
+        }else Log.d(TAG, "Service di localizzazione non connesso perchè percorso già completato");
     }
 
     @Override
@@ -114,15 +126,23 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
             e.printStackTrace();
         }
 
-        retrieveRouteInfo();
-
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 Log.d(TAG, "Chiamato onMapReady");
                 gMap = googleMap;
                 gMap.setMinZoomPreference(DEFAULT_ZOOM);
+                try {
+                    if (clickedRoute.getDone() == DONE){
+                        //clickedRoute.setLocationsArray(RouteManager.getInstance(getContext()).getLocationList(clickedRoute));
 
+                        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clickedRoute.getLocationsArray().get(0).getLatitude(),
+                                clickedRoute.getLocationsArray().get(0).getLongitude()), DEFAULT_ZOOM));
+                        clickedRoute.addPolylineToGoogleMap(gMap);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -160,19 +180,34 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
     public void onDestroyView() {
         Log.d(TAG, "Chiamato onDestroyView");
         super.onDestroyView();
+        if (locationService != null) {
+            locationService.removeLocationUpdates();
+            isBound = false;
+        }
     }
 
     private void retrieveRouteInfo(){
         Bundle bundle = getActivity().getIntent().getExtras();
         if (bundle != null){
             this.clickedRoute = bundle.getParcelable(RouteListAdapter.ROUTE_ITEM);
+            this.clickedRoute = RouteManager.getInstance(getContext()).getRouteWithName(this.clickedRoute.getName());
         }
         else Log.d(TAG, "Il bundle risulta essere vuoto");
     }
 
+
+    @SuppressLint("RestrictedApi")
     private void retrieveAndSetStopRouteButton(View view){
         stopRouteButton = view.findViewById(R.id.stop_route_floating_button);
+        if (RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).getDone() == DONE){
+            Log.d(TAG, "Il percorso selezionato è già stato completato");
+            stopRouteButton.setVisibility(View.INVISIBLE);
+        }
+
+        Log.d(TAG, "Percorso selezionato: " + RouteManager.getInstance(getContext()).getRouteWithName(clickedRoute.getName()).toString());
+
         stopRouteButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint({"MissingPermission", "RestrictedApi"})
             @Override
             public void onClick(View v) {
                 if (locationService != null){
@@ -180,6 +215,15 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
                     locationService.removeLocationUpdates();
                     isBound = false;
                     //TODO: la posizione sulla mappa dell'utente non deve cambiare una volta premuto il bottone
+                    gMap.setMyLocationEnabled(false);
+                    gMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    stopRouteButton.setVisibility(View.INVISIBLE);
+                    clickedRoute.setStopDate(new Date());
+                    RouteManager.getInstance(getContext()).setStartLatitudeAndLongitude(clickedRoute, clickedRoute.getLocationsArray().get(0).getLatitude(),
+                            clickedRoute.getLocationsArray().get(0).getLongitude());
+                    RouteManager.getInstance(getContext()).setAverageSpeedAndAccuracy(clickedRoute, clickedRoute.getAverageSpeed(), clickedRoute.getAverageAccuracy());
+                    //RouteManager.getInstance(getContext()).setLocationList(clickedRoute, clickedRoute.getLocationsArray());
+                    RouteManager.getInstance(getContext()).setDone(clickedRoute.getName(), Route.DONE);
                 }
             }
         });
@@ -201,8 +245,9 @@ public class RouteMapFragment extends Fragment implements SharedPreferences.OnSh
             if (isBound) {
                 updateLocationUI();
                 setMapViewToUserLocation(currentLocation);
+                clickedRoute.addLocationToLocationsArray(currentLocation);
+                clickedRoute.addPolylineToGoogleMap(gMap);
             }else{
-                //TODO: dopo aver premuto il bottone non vengono più ricevuti update quindi questi metodi non vengono raggiunti
                 gMap.setMyLocationEnabled(false);
                 gMap.getUiSettings().setMyLocationButtonEnabled(false);
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));

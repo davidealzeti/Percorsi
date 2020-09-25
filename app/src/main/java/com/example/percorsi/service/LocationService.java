@@ -36,6 +36,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.percorsi.R;
 import com.example.percorsi.activity.RouteActivity;
 import com.example.percorsi.fragment.RouteMapFragment;
+import com.example.percorsi.model.Route;
+import com.example.percorsi.persistence.AppPreferencesManager;
 import com.example.percorsi.utils.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -70,6 +72,8 @@ public class LocationService extends Service {
 
     private static final int FIVE_METERS = 5;
     private static final int TWO_SECONDS = 2000;
+    private static final int ONE_SECOND = 1000;
+    private static final int HALF_SECOND = 500;
 
     private LocationRequest locationRequest = null;
     private FusedLocationProviderClient fusedLocationClient = null;
@@ -173,7 +177,7 @@ public class LocationService extends Service {
         locationServiceHandler.removeCallbacksAndMessages(null);
     }
 
-    //TODO: spostare questo metodo in un fragment o activity che possa mostrare il dialog
+    /*
     private void openLocationSettings(){
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -194,6 +198,7 @@ public class LocationService extends Service {
             e.printStackTrace();
         }
     }
+    */
 
     public boolean isGPSPermissionGranted(){
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -202,9 +207,24 @@ public class LocationService extends Service {
     private void createLocationRequest(){
         Log.d(TAG, "Chiamato createLocationRequest");
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(TWO_SECONDS)
-                .setFastestInterval(TWO_SECONDS/2)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        switch (AppPreferencesManager.getMeansOfTransport(getApplicationContext())){
+            case Route.BY_CAR:
+                locationRequest.setInterval(HALF_SECOND)
+                        .setFastestInterval(HALF_SECOND/2)
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                break;
+            case Route.BY_PUBLIC_TRANSPORT:
+                locationRequest.setInterval(ONE_SECOND)
+                        .setFastestInterval(ONE_SECOND/2)
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                break;
+            default:
+                locationRequest.setInterval(TWO_SECONDS)
+                        .setFastestInterval(TWO_SECONDS/2)
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                break;
+        }
     }
 
     public void requestLocationUpdates() {
@@ -274,11 +294,11 @@ public class LocationService extends Service {
         PendingIntent servicePendingIntent = PendingIntent.getService(this, 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //TODO: controllare che nell'Intent non si debba passare il fragment invece dell'activity (?)
+
         PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, RouteActivity.class), 0);
 
-        //TODO: aggiornare il Builder aggiungendo il ChannelId (stringa) al costruttore
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .addAction(R.drawable.ic_launcher_foreground, getString(R.string.launch_activity), activityPendingIntent)
                 .addAction(android.R.drawable.ic_menu_close_clear_cancel, getString(R.string.remove_location_updates),
